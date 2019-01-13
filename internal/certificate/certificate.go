@@ -1,4 +1,4 @@
-package rdsmysql
+package certificate
 
 import (
 	"crypto/tls"
@@ -8,7 +8,9 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-const cert = `-----BEGIN CERTIFICATE-----
+// Certificate is the root certificate for RDS MySQL.
+// It's from https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+const Certificate = `-----BEGIN CERTIFICATE-----
 MIID9DCCAtygAwIBAgIBQjANBgkqhkiG9w0BAQUFADCBijELMAkGA1UEBhMCVVMx
 EzARBgNVBAgMCldhc2hpbmd0b24xEDAOBgNVBAcMB1NlYXR0bGUxIjAgBgNVBAoM
 GUFtYXpvbiBXZWIgU2VydmljZXMsIEluYy4xEzARBgNVBAsMCkFtYXpvbiBSRFMx
@@ -420,7 +422,7 @@ K6o4nMsEvhBKgo4z7H1EqqxXhvN2
 
 func init() {
 	rootCertPool := x509.NewCertPool()
-	if ok := rootCertPool.AppendCertsFromPEM([]byte(cert)); !ok {
+	if ok := rootCertPool.AppendCertsFromPEM([]byte(Certificate)); !ok {
 		panic(errors.New("failed to append certs"))
 	}
 	err := mysql.RegisterTLSConfig("rdsmysql", &tls.Config{
