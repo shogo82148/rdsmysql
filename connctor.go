@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
 	"github.com/go-sql-driver/mysql"
 	pkgerrors "github.com/pkg/errors"
+	_ "github.com/shogo82148/rdsmysql/internal/certificate" // install certificate.
 )
 
 // check Connector implements driver.Connctor.
