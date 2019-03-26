@@ -1,3 +1,7 @@
+// Package rdsmysql is a SQL driver that allows IAM Database Authentication for Amazon RDS and Amazon Aurora.
+//
+// https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html
+// https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.IAMDBAuth.html
 package rdsmysql
 
 import (
@@ -9,8 +13,10 @@ import (
 	"golang.org/x/xerrors"
 )
 
-// Driver is mysql driver using IAM DB Auth.
+// Driver is a mysql driver using IAM DB Auth.
+//
 // https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html
+// https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.IAMDBAuth.html
 type Driver struct {
 	Session *session.Session
 }
