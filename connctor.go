@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
 	"github.com/go-sql-driver/mysql"
-	pkgerrors "github.com/pkg/errors"
 	_ "github.com/shogo82148/rdsmysql/internal/certificate" // install certificate.
+	"golang.org/x/xerrors"
 )
 
 // check Connector implements driver.Connctor.
@@ -32,7 +32,7 @@ func (c *Connector) Connect(context.Context) (driver.Conn, error) {
 	}
 	token, err := rdsutils.BuildAuthToken(config.Addr, *region, config.User, cred)
 	if err != nil {
-		return nil, pkgerrors.Wrap(err, "fail to build auth token")
+		return nil, xerrors.Errorf("fail to build auth token: %w", err)
 	}
 
 	// override configure

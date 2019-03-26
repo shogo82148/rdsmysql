@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.com/shogo82148/rdsmysql.svg?branch=master)](https://travis-ci.com/shogo82148/rdsmysql)
+[![GoDoc](https://godoc.org/github.com/shogo82148/rdsmysql?status.svg)](https://godoc.org/github.com/shogo82148/rdsmysql)
+
 # rdsmysql
 
 The rdsmysql package is a SQL driver for Amazon RDS.
