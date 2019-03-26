@@ -6,7 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/go-sql-driver/mysql"
-	pkgerrors "github.com/pkg/errors"
+	"golang.org/x/xerrors"
 )
 
 // Driver is mysql driver using IAM DB Auth.
@@ -31,7 +31,7 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
 	config, err := mysql.ParseDSN(name)
 	if err != nil {
-		return nil, pkgerrors.Wrap(err, "fail to parse dns")
+		return nil, xerrors.Errorf("fail to parse dns: %w", err)
 	}
 
 	return &Connector{
