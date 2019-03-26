@@ -3,8 +3,10 @@
 
 # rdsmysql
 
-The rdsmysql package is a SQL driver for Amazon RDS.
-It allows [Authentication and Access Control for Amazon RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAM.html) using IAM.
+The rdsmysql package is a SQL driver that allows IAM Database Authentication for Amazon RDS and Amazon Aurora.
+
+- [IAM Database Authentication for MySQL and PostgreSQL - Amazon Relational Database Service](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html)
+- [IAM Database Authentication - Amazon Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.IAMDBAuth.html)
 
 ``` go
 c := aws.NewConfig().WithRegion("ap-northeast-1")
