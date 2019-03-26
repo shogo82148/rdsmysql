@@ -1,4 +1,4 @@
-anguage: go
+language: go
 sudo: false
 
 env:
