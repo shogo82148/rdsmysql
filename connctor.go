@@ -29,7 +29,7 @@ type Connector struct {
 
 // Connect returns a connection to the database.
 func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
-	config := *c.Config // shollow copy
+	config := *c.Config // shallow copy
 
 	cred := c.Session.Config.Credentials
 	region := c.Session.Config.Region
@@ -52,7 +52,12 @@ func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
 		}
 	}
 
-	return (&mysql.MySQLDriver{}).Open(config.FormatDSN())
+	connector, err := mysql.NewConnector(&config)
+	if err != nil {
+		return nil, xerrors.Errorf("fail to created new connector: %w", err)
+	}
+
+	return connector.Connect(ctx)
 }
 
 func (c *Connector) getlimiter() *rate.Limiter {
