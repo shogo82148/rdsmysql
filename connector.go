@@ -25,19 +25,43 @@ type Connector struct {
 
 	mu      sync.Mutex
 	limiter *rate.Limiter
+	config  *mysql.Config
 }
 
 // Connect returns a connection to the database.
 func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
-	config := *c.Config // shallow copy
+	// rate limit
+	if l := c.getlimiter(); l != nil {
+		if err := l.Wait(ctx); err != nil {
+			return nil, err
+		}
+	}
 
 	cred := c.Session.Config.Credentials
 	region := c.Session.Config.Region
 	if region == nil {
 		return nil, errors.New("rdsmysql: region is missing")
 	}
+
+	c.mu.Lock()
+	if c.config == nil {
+		copy := *c.Config // shallow copy, but ok. we rewrite only shallow fields.
+
+		// format and parse dns.
+		// because TLS config is loaded by ParseDNS.
+		copy.TLSConfig = "rdsmysql"
+		config, err := mysql.ParseDSN(copy.FormatDSN())
+		if err != nil {
+			c.mu.Unlock()
+			return nil, xerrors.Errorf("fail to parse dsn: %w", err)
+		}
+		c.config = config
+	}
+	config := c.config
+
 	token, err := rdsutils.BuildAuthToken(config.Addr, *region, config.User, cred)
 	if err != nil {
+		c.mu.Unlock()
 		return nil, xerrors.Errorf("fail to build auth token: %w", err)
 	}
 
@@ -46,16 +70,12 @@ func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
 	config.Passwd = token
 	config.TLSConfig = "rdsmysql"
 
-	if l := c.getlimiter(); l != nil {
-		if err := l.Wait(ctx); err != nil {
-			return nil, err
-		}
-	}
-
-	connector, err := mysql.NewConnector(&config)
+	connector, err := mysql.NewConnector(config)
 	if err != nil {
+		c.mu.Unlock()
 		return nil, xerrors.Errorf("fail to created new connector: %w", err)
 	}
+	c.mu.Unlock()
 
 	return connector.Connect(ctx)
 }
