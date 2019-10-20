@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.com/shogo82148/rdsmysql.svg?branch=master)](https://travis-ci.com/shogo82148/rdsmysql)
+<p align="left">
+  <a href="https://github.com/shogo82148/rdsmysql"><img alt="GitHub Actions status" src="https://github.com/shogo82148/rdsmysql/workflows/Test/badge.svg"></a>
+</p>
 [![GoDoc](https://godoc.org/github.com/shogo82148/rdsmysql?status.svg)](https://godoc.org/github.com/shogo82148/rdsmysql)
 
 # rdsmysql
