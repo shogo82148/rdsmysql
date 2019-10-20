@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
+	"sync"
 	"syscall"
 	"time"
 
@@ -21,10 +22,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	run(conf)
+	os.Exit(run(conf))
 }
 
-func run(c *config.Config) {
+func run(c *config.Config) int {
 	dir, err := ioutil.TempDir("", "rdsmysql-")
 	if err != nil {
 		log.Fatal(err)
@@ -56,32 +57,43 @@ func run(c *config.Config) {
 		log.Fatal(err)
 	}
 
+	var wg sync.WaitGroup
+	done := make(chan struct{})
+
 	// transfer signals.
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		sig := make(chan os.Signal, 1)
 		signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
-		for s := range sig {
-			cmd.Process.Signal(s)
+		for {
+			select {
+			case s := <-sig:
+				cmd.Process.Signal(s)
+			case <-done:
+				return
+			}
 		}
 	}()
 
 	// password rotation
+	wg.Add(1)
 	go func() {
-		d := 5 * time.Minute
-		for range time.Tick(d) {
-			func() {
+		defer wg.Done()
+		ticker := time.NewTicker(5 * time.Minute)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
 				config.Generate(sess, dir, c)
-			}()
+			case <-done:
+				return
+			}
 		}
 	}()
 
-	if err := cmd.Wait(); err != nil {
-		if e, ok := err.(*exec.ExitError); ok {
-			if s, ok := e.Sys().(syscall.WaitStatus); ok {
-				os.Exit(s.ExitStatus())
-			}
-		}
-		log.Println("Unimplemented for system where exec.ExitError.Sys() is not syscall.WaitStatus.")
-		os.Exit(111)
-	}
+	_ = cmd.Wait()
+	close(done)
+	wg.Wait()
+	return cmd.ProcessState.ExitCode()
 }
