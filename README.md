@@ -1,6 +1,4 @@
-<p align="left">
-  <a href="https://github.com/shogo82148/rdsmysql"><img alt="GitHub Actions status" src="https://github.com/shogo82148/rdsmysql/workflows/Test/badge.svg"></a>
-</p>
+[![GitHub Actions status](https://github.com/shogo82148/rdsmysql/workflows/Go/badge.svg)](https://github.com/shogo82148/rdsmysql)
 [![GoDoc](https://godoc.org/github.com/shogo82148/rdsmysql?status.svg)](https://godoc.org/github.com/shogo82148/rdsmysql)
 
 # rdsmysql
