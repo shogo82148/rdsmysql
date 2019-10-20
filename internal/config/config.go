@@ -13,7 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
 	"github.com/shogo82148/rdsmysql/internal/certificate"
-	"golang.org/x/xerrors"
 )
 
 // Generate generates the configuration file for mysql.
@@ -26,7 +25,7 @@ func Generate(session *session.Session, dir string, config *Config) error {
 		credentials,
 	)
 	if err != nil {
-		return xerrors.Errorf("fail to build auth token: %w", err)
+		return fmt.Errorf("fail to build auth token: %w", err)
 	}
 	pempath := filepath.Join(dir, "rds-combined-ca-bundle.pem")
 	confpath := filepath.Join(dir, "my.conf")

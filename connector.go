@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql/driver"
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -11,7 +12,6 @@ import (
 	"github.com/go-sql-driver/mysql"
 	_ "github.com/shogo82148/rdsmysql/internal/certificate" // install certificate.
 	"golang.org/x/time/rate"
-	"golang.org/x/xerrors"
 )
 
 // check Connector implements driver.Connctor.
@@ -53,7 +53,7 @@ func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
 		config, err := mysql.ParseDSN(copy.FormatDSN())
 		if err != nil {
 			c.mu.Unlock()
-			return nil, xerrors.Errorf("fail to parse dsn: %w", err)
+			return nil, fmt.Errorf("fail to parse dsn: %w", err)
 		}
 		c.config = config
 	}
@@ -62,7 +62,7 @@ func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
 	token, err := rdsutils.BuildAuthToken(config.Addr, *region, config.User, cred)
 	if err != nil {
 		c.mu.Unlock()
-		return nil, xerrors.Errorf("fail to build auth token: %w", err)
+		return nil, fmt.Errorf("fail to build auth token: %w", err)
 	}
 
 	// override configure
@@ -73,7 +73,7 @@ func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
 	connector, err := mysql.NewConnector(config)
 	if err != nil {
 		c.mu.Unlock()
-		return nil, xerrors.Errorf("fail to created new connector: %w", err)
+		return nil, fmt.Errorf("fail to created new connector: %w", err)
 	}
 	c.mu.Unlock()
 
