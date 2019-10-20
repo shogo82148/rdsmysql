@@ -7,10 +7,10 @@ package rdsmysql
 import (
 	"context"
 	"database/sql/driver"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/go-sql-driver/mysql"
-	"golang.org/x/xerrors"
 )
 
 // Driver is a mysql driver using IAM DB Auth.
@@ -37,7 +37,7 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
 	config, err := mysql.ParseDSN(name)
 	if err != nil {
-		return nil, xerrors.Errorf("fail to parse dns: %w", err)
+		return nil, fmt.Errorf("fail to parse dns: %w", err)
 	}
 
 	return &Connector{

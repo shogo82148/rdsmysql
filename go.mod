@@ -9,6 +9,5 @@ require (
 	github.com/stretchr/testify v1.3.0 // indirect
 	golang.org/x/net v0.0.0-20190326083653-a33f666f30f7 // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
-	golang.org/x/xerrors v0.0.0-20190315151331-d61658bd2e18
 	google.golang.org/appengine v1.5.0 // indirect
 )
