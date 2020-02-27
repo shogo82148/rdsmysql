@@ -19,13 +19,20 @@ var _ driver.Connector = &Connector{}
 
 // Connector is an implementation of driver.Connector
 type Connector struct {
-	Session           *session.Session
-	Config            *mysql.Config
+	// Session is AWS Session.
+	Session *session.Session
+
+	// Config is a configure for connecting to MySQL servers.
+	Config *mysql.Config
+
+	// MaxConnsPerSecond is a limit for creating new connections.
+	// Zero means no limit.
 	MaxConnsPerSecond int
 
 	mu      sync.Mutex
 	limiter *rate.Limiter
-	config  *mysql.Config
+	// config is same as Config, but TLS configured
+	config *mysql.Config
 }
 
 // Connect returns a connection to the database.
@@ -37,47 +44,62 @@ func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
 		}
 	}
 
+	connector, err := c.newConnector()
+	if err != nil {
+		return nil, err
+	}
+	return connector.Connect(ctx)
+}
+
+func (c *Connector) newConnector() (driver.Connector, error) {
+	config, err := c.newConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	// refresh token
 	cred := c.Session.Config.Credentials
 	region := c.Session.Config.Region
 	if region == nil {
 		return nil, errors.New("rdsmysql: region is missing")
 	}
+	token, err := rdsutils.BuildAuthToken(config.Addr, *region, config.User, cred)
+	if err != nil {
+		return nil, fmt.Errorf("rdsmysql: fail to build auth token: %w", err)
+	}
+	config.Passwd = token
 
+	// create new connector
+	connector, err := mysql.NewConnector(config)
+	if err != nil {
+		return nil, fmt.Errorf("rdsmysql: fail to created new connector: %w", err)
+	}
+	return connector, nil
+}
+
+func (c *Connector) newConfig() (*mysql.Config, error) {
 	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	if c.config == nil {
 		copy := *c.Config // shallow copy, but ok. we rewrite only shallow fields.
 
-		// format and parse dns.
-		// because TLS config is loaded by ParseDNS.
+		// override configure for Amazon RDS
+		// see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.Connecting.AWSCLI.html
 		copy.TLSConfig = "rdsmysql"
+		copy.AllowCleartextPasswords = true
+
+		// format and reparse dns.
+		// because we can't write TLS config directly, ParseDNS does.
 		config, err := mysql.ParseDSN(copy.FormatDSN())
 		if err != nil {
-			c.mu.Unlock()
-			return nil, fmt.Errorf("fail to parse dsn: %w", err)
+			return nil, fmt.Errorf("rdsmysql: fail to parse dsn: %w", err)
 		}
 		c.config = config
 	}
-	config := c.config
 
-	token, err := rdsutils.BuildAuthToken(config.Addr, *region, config.User, cred)
-	if err != nil {
-		c.mu.Unlock()
-		return nil, fmt.Errorf("fail to build auth token: %w", err)
-	}
-
-	// override configure
-	config.AllowCleartextPasswords = true
-	config.Passwd = token
-	config.TLSConfig = "rdsmysql"
-
-	connector, err := mysql.NewConnector(config)
-	if err != nil {
-		c.mu.Unlock()
-		return nil, fmt.Errorf("fail to created new connector: %w", err)
-	}
-	c.mu.Unlock()
-
-	return connector.Connect(ctx)
+	copy := *c.config // shallow copy, but ok. we rewrite only shallow fields.
+	return &copy, nil
 }
 
 func (c *Connector) getlimiter() *rate.Limiter {
@@ -85,12 +107,13 @@ func (c *Connector) getlimiter() *rate.Limiter {
 		return nil
 	}
 	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	limiter := c.limiter
 	if limiter == nil {
 		limiter = rate.NewLimiter(rate.Limit(c.MaxConnsPerSecond), 1)
 		c.limiter = limiter
 	}
-	c.mu.Unlock()
 	return limiter
 }
 
