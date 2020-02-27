@@ -7,6 +7,7 @@ package rdsmysql
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -35,6 +36,10 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 
 // OpenConnector opens new connection.
 func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
+	if d.Session.Config.Region == nil {
+		return nil, errors.New("rdsmysql: region is missing")
+	}
+
 	config, err := mysql.ParseDSN(name)
 	if err != nil {
 		return nil, fmt.Errorf("fail to parse dns: %w", err)
