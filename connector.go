@@ -14,7 +14,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
-// check Connector implements driver.Connctor.
+// check Connector implements driver.Connector.
 var _ driver.Connector = &Connector{}
 
 // Connector is an implementation of driver.Connector
