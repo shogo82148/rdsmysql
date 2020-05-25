@@ -3,7 +3,7 @@ module github.com/shogo82148/rdsmysql
 go 1.13
 
 require (
-	github.com/aws/aws-sdk-go v1.31.3
+	github.com/aws/aws-sdk-go v1.31.4
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	golang.org/x/text v0.3.2 // indirect
