@@ -1,5 +1,5 @@
-[![GitHub Actions status](https://github.com/shogo82148/rdsmysql/workflows/Go/badge.svg)](https://github.com/shogo82148/rdsmysql)
-[![GoDoc](https://godoc.org/github.com/shogo82148/rdsmysql?status.svg)](https://godoc.org/github.com/shogo82148/rdsmysql)
+[![GitHub Actions status](https://github.com/shogo82148/rdsmysql/workflows/Test/badge.svg)](https://github.com/shogo82148/rdsmysql)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/shogo82148/rdsmysql)](https://pkg.go.dev/github.com/shogo82148/rdsmysql)
 
 # rdsmysql
 
