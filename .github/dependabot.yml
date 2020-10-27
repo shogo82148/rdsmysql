@@ -9,5 +9,4 @@ updates:
     ignore:
       - dependency-name: github.com/aws/aws-sdk-go
         versions:
-          - ">= 1.34"
-          - "< 1.35"
+          - ">= 1.35"
