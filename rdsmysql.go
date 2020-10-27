@@ -1,7 +1,9 @@
 // Package rdsmysql is a SQL driver that allows IAM Database Authentication for Amazon RDS and Amazon Aurora.
+// It also supports connecting to the RDS proxy using IAM authentication.
 //
 // https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html
 // https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.IAMDBAuth.html
+// https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-proxy.html#rds-proxy-connecting-iam
 package rdsmysql
 
 import (
@@ -16,9 +18,19 @@ import (
 
 // Driver is a mysql driver using IAM DB Auth.
 //
-// https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html
-// https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.IAMDBAuth.html
+//     // configure AWS session
+//     awsConfig := aws.NewConfig().WithRegion("ap-northeast-1")
+//     awsSession := session.Must(session.NewSession(awsConfig))
+//
+//     // configure the driver
+//     driver := &rdsmysql.Driver{
+//       Session: awsSession,
+//     }
+//     sql.Register("rdsmysql", driver)
+//
+//     // additional code for using the `rdsmysql` driver
 type Driver struct {
+	// Session is an AWS session
 	Session *session.Session
 }
 
