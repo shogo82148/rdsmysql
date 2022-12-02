@@ -9,7 +9,7 @@ import (
 )
 
 func ExampleOpen() {
-	// register authentication infomation
+	// register authentication information
 	c := aws.NewConfig().WithRegion("ap-northeast-1")
 	s := session.Must(session.NewSession(c))
 	d := &rdsmysql.Driver{

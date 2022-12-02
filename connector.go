@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
 	"github.com/go-sql-driver/mysql"
-	_ "github.com/shogo82148/rdsmysql/internal/certificate" // install certificate.
+	"github.com/shogo82148/rdsmysql/internal/certificate"
 	"golang.org/x/time/rate"
 )
 
@@ -82,24 +82,18 @@ func (c *Connector) newConfig() (*mysql.Config, error) {
 	defer c.mu.Unlock()
 
 	if c.config == nil {
-		copy := *c.Config // shallow copy, but ok. we rewrite only shallow fields.
+		clone := *c.Config // shallow copy, but ok. we rewrite only shallow fields.
 
 		// override configure for Amazon RDS
 		// see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.Connecting.AWSCLI.html
-		copy.TLSConfig = "rdsmysql"
-		copy.AllowCleartextPasswords = true
+		clone.AllowCleartextPasswords = true
+		clone.TLS = certificate.Config
 
-		// format and reparse dns.
-		// because we can't write TLS config directly, ParseDNS does.
-		config, err := mysql.ParseDSN(copy.FormatDSN())
-		if err != nil {
-			return nil, fmt.Errorf("rdsmysql: fail to parse dsn: %w", err)
-		}
-		c.config = config
+		c.config = &clone
 	}
 
-	copy := *c.config // shallow copy, but ok. we rewrite only shallow fields.
-	return &copy, nil
+	clone := *c.config // shallow copy, but ok. we rewrite only shallow fields.
+	return &clone, nil
 }
 
 func (c *Connector) getlimiter() *rate.Limiter {
