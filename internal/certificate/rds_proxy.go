@@ -1,7 +1,7 @@
 package certificate
 
 // https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-proxy.html#rds-proxy-connecting-iam
-// the root certifcate for RDS Proxy from https://www.amazontrust.com/repository/AmazonRootCA1.pem
+// the root certificate for RDS Proxy from https://www.amazontrust.com/repository/AmazonRootCA1.pem
 const rdsProxyCertificate = `-----BEGIN CERTIFICATE-----
 MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF
 ADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6
