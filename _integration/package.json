@@ -1,5 +1,5 @@
 {
-  "name": "_integration",
+  "name": "integration",
   "version": "0.1.0",
   "bin": {
     "_integration": "bin/_integration.js"
@@ -13,9 +13,9 @@
   "devDependencies": {
     "@types/jest": "^29.4.0",
     "@types/node": "18.14.6",
+    "aws-cdk": "2.78.0",
     "jest": "^29.5.0",
     "ts-jest": "^29.0.5",
-    "aws-cdk": "2.78.0",
     "ts-node": "^10.9.1",
     "typescript": "~4.9.5"
   },
