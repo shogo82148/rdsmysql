@@ -42,7 +42,7 @@ enable-cleartext-plugin
 	if err := ioutil.WriteFile(fmt.Sprintf("%s.%d", confpath, now.UnixNano()), []byte(conf), 0600); err != nil {
 		return err
 	}
-	if err := ioutil.WriteFile(fmt.Sprintf("%s.%d", pempath, now.UnixNano()), []byte(certificate.Certificate), 0600); err != nil {
+	if err := ioutil.WriteFile(fmt.Sprintf("%s.%d", pempath, now.UnixNano()), certificate.Certificate, 0600); err != nil {
 		return err
 	}
 
