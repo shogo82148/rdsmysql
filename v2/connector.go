@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/rds/auth"
 	"github.com/go-sql-driver/mysql"
 	"github.com/shogo82148/rdsmysql/internal/certificate"
 	"golang.org/x/time/rate"
@@ -19,11 +19,11 @@ var _ driver.Connector = (*Connector)(nil)
 
 // Connector is an implementation of driver.Connector
 type Connector struct {
-	// Session is AWS Session.
-	Session *session.Session
+	// AWSConfig is AWS Config.
+	AWSConfig *aws.Config
 
-	// Config is a configure for connecting to MySQL servers.
-	Config *mysql.Config
+	// MySQLConfig is a configure for connecting to MySQL servers.
+	MySQLConfig *mysql.Config
 
 	// MaxConnsPerSecond is a limit for creating new connections.
 	// Zero means no limit.
@@ -44,26 +44,26 @@ func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
 		}
 	}
 
-	connector, err := c.newConnector()
+	connector, err := c.newConnector(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return connector.Connect(ctx)
 }
 
-func (c *Connector) newConnector() (driver.Connector, error) {
+func (c *Connector) newConnector(ctx context.Context) (driver.Connector, error) {
 	config, err := c.newConfig()
 	if err != nil {
 		return nil, err
 	}
 
 	// refresh token
-	cred := c.Session.Config.Credentials
-	region := c.Session.Config.Region
-	if region == nil {
+	cred := c.AWSConfig.Credentials
+	region := c.AWSConfig.Region
+	if region == "" {
 		return nil, errors.New("rdsmysql: region is missing")
 	}
-	token, err := rdsutils.BuildAuthToken(config.Addr, *region, config.User, cred)
+	token, err := auth.BuildAuthToken(ctx, config.Addr, region, config.User, cred)
 	if err != nil {
 		return nil, fmt.Errorf("rdsmysql: fail to build auth token: %w", err)
 	}
@@ -82,7 +82,7 @@ func (c *Connector) newConfig() (*mysql.Config, error) {
 	defer c.mu.Unlock()
 
 	if c.config == nil {
-		clone := *c.Config // shallow copy, but ok. we rewrite only shallow fields.
+		clone := *c.MySQLConfig // shallow copy, but ok. we rewrite only shallow fields.
 
 		// override configure for Amazon RDS
 		// see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.Connecting.AWSCLI.html
@@ -113,7 +113,5 @@ func (c *Connector) getlimiter() *rate.Limiter {
 
 // Driver returns the underlying Driver of the Connector.
 func (c *Connector) Driver() driver.Driver {
-	return &Driver{
-		Session: c.Session,
-	}
+	return &Driver{}
 }
