@@ -1,3 +1,5 @@
+//go:generate go run ../cmd/update_certificate/main.go
+
 package certificate
 
 import (
@@ -9,9 +11,11 @@ import (
 )
 
 // Certificate is the certificates for connecting RDS MySQL with SSL/TLS.
-// It contains the intermediate and root certificates for RDS MySQL ( https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem ),
-// and the root certificates for RDS Proxy( https://www.amazontrust.com/repository/AmazonRootCA1.pem ).
-const Certificate = rdsProxyCertificate + rdsCertificates
+// It contains the intermediate and root certificates for [Amazon RDS MySQL] and [Amazon Aurora MySQL].
+//
+// [Amazon RDS MySQL]: https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
+// [Amazon Aurora MySQL]: https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.SSL.html
+const Certificate = rdsCertificates
 
 var Config *tls.Config
 
