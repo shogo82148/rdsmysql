@@ -18,17 +18,17 @@ import (
 
 // Driver is a mysql driver using IAM DB Auth.
 //
-//     // configure AWS session
-//     awsConfig := aws.NewConfig().WithRegion("ap-northeast-1")
-//     awsSession := session.Must(session.NewSession(awsConfig))
+//	// configure AWS session
+//	awsConfig := aws.NewConfig().WithRegion("ap-northeast-1")
+//	awsSession := session.Must(session.NewSession(awsConfig))
 //
-//     // configure the driver
-//     driver := &rdsmysql.Driver{
-//       Session: awsSession,
-//     }
-//     sql.Register("rdsmysql", driver)
+//	// configure the driver
+//	driver := &rdsmysql.Driver{
+//	  Session: awsSession,
+//	}
+//	sql.Register("rdsmysql", driver)
 //
-//     // additional code for using the `rdsmysql` driver
+//	// additional code for using the `rdsmysql` driver
 type Driver struct {
 	// Session is an AWS session
 	Session *session.Session
