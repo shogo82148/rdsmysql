@@ -1,0 +1,25 @@
+name: update
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: update
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: stable
+
+      - name: Update the Certificates
+        run: go generate ./...
+
+      - name: Commit and Push Changes
+        uses: shogo82148/actions-commit-and-create-pr@v1
