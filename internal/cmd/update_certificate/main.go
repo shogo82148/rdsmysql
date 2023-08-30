@@ -91,6 +91,10 @@ func download(ctx context.Context, url string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
 	return io.ReadAll(resp.Body)
 }
 
