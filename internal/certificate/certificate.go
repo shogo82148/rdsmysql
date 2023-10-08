@@ -22,7 +22,7 @@ var Config *tls.Config
 
 func init() {
 	rootCertPool := x509.NewCertPool()
-	if ok := rootCertPool.AppendCertsFromPEM(Certificate); !ok {
+	if ok := rootCertPool.AppendCertsFromPEM([]byte(Certificate)); !ok {
 		panic(errors.New("failed to append certs"))
 	}
 	Config = &tls.Config{
