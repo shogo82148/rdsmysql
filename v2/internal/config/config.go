@@ -15,7 +15,7 @@ import (
 )
 
 // Generate generates the configuration file for mysql.
-func Generate(ctx context.Context, awsConfig *aws.Config, dir string, config *Config) error {
+func Generate(ctx context.Context, awsConfig aws.Config, dir string, config *Config) error {
 	cred := awsConfig.Credentials
 	region := awsConfig.Region
 	if region == "" {
