@@ -34,7 +34,27 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
-      - name: Test
+      - name: Test v1
         run: make test
-        env:
-          GO111MODULE: "on"
+
+      - name: Test v2
+        run: make test
+        working-directory: v2
+
+  goreleaser-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+      - name: Check GoReleaser configure v1
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          version: latest
+          args: check
+          workdir: v2
