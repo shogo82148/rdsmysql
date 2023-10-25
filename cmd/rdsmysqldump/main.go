@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -26,7 +25,7 @@ func main() {
 }
 
 func run(c *config.Config) int {
-	dir, err := ioutil.TempDir("", "rdsmysql-")
+	dir, err := os.MkdirTemp("", "rdsmysql-")
 	if err != nil {
 		log.Fatal(err)
 	}
