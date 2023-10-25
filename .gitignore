@@ -2,3 +2,5 @@
 /artifacts/
 /release/
 /go.work
+
+dist/
