@@ -22,6 +22,13 @@ jobs:
           go-version: stable
           cache-dependency-path: go.sum
 
+      - name: Configure AWS Credentials
+        uses: fuller-inc/actions-aws-assume-role@v1
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: arn:aws:iam::445285296882:role/rpm-repository-users-RdsMySQLDeployRole-XDibbGv88soX
+          role-session-tagging: true
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
