@@ -17,7 +17,8 @@ import (
 // check Connector implements driver.Connector.
 var _ driver.Connector = (*Connector)(nil)
 
-// Connector is an implementation of driver.Connector
+// Connector is a MySQL connector using IAM DB Auth.
+// It implements [database/sql/driver.Connector].
 type Connector struct {
 	// Session is AWS Session.
 	Session *session.Session
@@ -111,7 +112,7 @@ func (c *Connector) getlimiter() *rate.Limiter {
 	return limiter
 }
 
-// Driver returns the underlying Driver of the Connector.
+// Driver returns the underlying [database/sql/driver.Driver] of the [Connector].
 func (c *Connector) Driver() driver.Driver {
 	return &Driver{
 		Session: c.Session,
