@@ -57,10 +57,11 @@ enable-cleartext-plugin
 
 // Config is the configuration for connecting to mysql servers.
 type Config struct {
-	User string
-	Host string
-	Port int
-	Args []string
+	User    string
+	Host    string
+	Port    int
+	Version bool
+	Args    []string
 }
 
 // Parse parses the args of mysql command.
@@ -92,6 +93,8 @@ func Parse(args []string) (*Config, error) {
 				return nil, errors.New("fail to parse port")
 			}
 			conf.Port = port
+		case "-V", "--version":
+			conf.Version = true
 		default:
 			conf.Args = append(conf.Args, args[i])
 		}

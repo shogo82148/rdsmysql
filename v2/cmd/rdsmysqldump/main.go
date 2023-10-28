@@ -25,6 +25,11 @@ func main() {
 }
 
 func run(c *config.Config) int {
+	if c.Version {
+		showVersion()
+		return 0
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

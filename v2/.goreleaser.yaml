@@ -14,14 +14,32 @@ before:
     - go generate ./...
 
 builds:
-  - env:
+  - id: rdsmysql
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
       - windows
       - darwin
     main: ./cmd/rdsmysql
-
+    binary: rdsmysql
+    ldflags:
+      - -s
+      - -w
+      - -X main.version={{.Version}}
+  - id: rdsmysqldump
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    main: ./cmd/rdsmysqldump
+    binary: rdsmysqldump
+    ldflags:
+      - -s
+      - -w
+      - -X main.version={{.Version}}
 archives:
   - format: tar.gz
     # use zip for windows archives
