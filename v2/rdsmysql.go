@@ -1,9 +1,10 @@
-// Package rdsmysql is a SQL driver that allows IAM Database Authentication for Amazon RDS and Amazon Aurora.
-// It also supports connecting to the RDS proxy using IAM authentication.
+// Package rdsmysql is a MySQL SQL driver that allows [IAM Database Authentication for Amazon RDS]
+// and [IAM Database Authentication for Amazon Aurora].
+// It also supports connecting with [the RDS proxy using IAM authentication].
 //
-// https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html
-// https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.IAMDBAuth.html
-// https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-proxy.html#rds-proxy-connecting-iam
+// [IAM Database Authentication for Amazon RDS]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html
+// [IAM Database Authentication for Amazon Aurora]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.IAMDBAuth.html
+// [the RDS proxy using IAM authentication]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/rds-proxy.html#rds-proxy-connecting-iam
 package rdsmysql
 
 import (
@@ -16,16 +17,16 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-// Driver is a mysql driver using IAM DB Auth.
+// Driver is a MySQL driver using IAM DB Auth.
 type Driver struct {
 	// AWSConfig is AWS Config.
-	AWSConfig *aws.Config
+	AWSConfig aws.Config
 }
 
 var _ driver.Driver = (*Driver)(nil)
 var _ driver.DriverContext = (*Driver)(nil)
 
-// Open opens new connection.
+// Open opens a new connection.
 func (d *Driver) Open(name string) (driver.Conn, error) {
 	c, err := d.OpenConnector(name)
 	if err != nil {
@@ -34,7 +35,7 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 	return c.Connect(context.Background())
 }
 
-// OpenConnector opens new connection.
+// OpenConnector opens a new connector.
 func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
 	if d.AWSConfig.Region == "" {
 		return nil, errors.New("rdsmysql: region is missing")
@@ -42,7 +43,7 @@ func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
 
 	config, err := mysql.ParseDSN(name)
 	if err != nil {
-		return nil, fmt.Errorf("fail to parse dns: %w", err)
+		return nil, fmt.Errorf("rdsmysql: fail to parse dns: %w", err)
 	}
 
 	return &Connector{
