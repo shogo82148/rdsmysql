@@ -18,8 +18,12 @@ jobs:
         with:
           go-version: stable
 
-      - name: Update the Certificates
+      - name: Update the Certificates v1
         run: go generate ./...
+
+      - name: Update the Certificates v2
+        run: go generate ./...
+        working-directory: v2
 
       - name: Commit and Push Changes
         uses: shogo82148/actions-commit-and-create-pr@v1
