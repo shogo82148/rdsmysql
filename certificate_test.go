@@ -9,7 +9,7 @@ import (
 func TestCertificate(t *testing.T) {
 	t.Parallel()
 
-	pemCerts := []byte(Certificate)
+	pemCerts := []byte(Certificates)
 	for len(pemCerts) > 0 {
 		var block *pem.Block
 		block, pemCerts = pem.Decode(pemCerts)
