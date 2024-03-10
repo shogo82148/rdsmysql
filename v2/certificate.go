@@ -1,6 +1,6 @@
-//go:generate go run ../cmd/update_certificate/main.go
+//go:generate go run internal/cmd/update_certificate/main.go
 
-package certificate
+package rdsmysql
 
 import (
 	"crypto/tls"
@@ -17,18 +17,18 @@ import (
 // [Amazon Aurora MySQL]: https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.SSL.html
 const Certificate = rdsCertificates
 
-// Config is the tls.Config for connecting RDS MySQL with SSL/TLS.
-var Config *tls.Config
+// TLSConfig is the tls.TLSConfig for connecting RDS MySQL with SSL/TLS.
+var TLSConfig *tls.Config
 
 func init() {
 	rootCertPool := x509.NewCertPool()
 	if ok := rootCertPool.AppendCertsFromPEM([]byte(Certificate)); !ok {
 		panic(errors.New("failed to append certs"))
 	}
-	Config = &tls.Config{
+	TLSConfig = &tls.Config{
 		RootCAs: rootCertPool,
 	}
-	err := mysql.RegisterTLSConfig("rdsmysql", Config)
+	err := mysql.RegisterTLSConfig("rdsmysql", TLSConfig)
 	if err != nil {
 		panic(err)
 	}

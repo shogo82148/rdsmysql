@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
 	"github.com/go-sql-driver/mysql"
-	"github.com/shogo82148/rdsmysql/internal/certificate"
 )
 
 // Apply applies the IAM DB Auth to mysqlConfig.
@@ -21,7 +20,7 @@ func Apply(config *mysql.Config, session *session.Session) error {
 	// override configure for Amazon RDS
 	// see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.Connecting.AWSCLI.html
 	config.AllowCleartextPasswords = true
-	config.TLS = certificate.Config
+	config.TLS = TLSConfig
 
 	// refresh token
 	cred := session.Config.Credentials

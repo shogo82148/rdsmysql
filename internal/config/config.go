@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
-	"github.com/shogo82148/rdsmysql/internal/certificate"
+	"github.com/shogo82148/rdsmysql/v2"
 )
 
 // Generate generates the configuration file for mysql.
@@ -41,7 +41,7 @@ enable-cleartext-plugin
 	if err := os.WriteFile(fmt.Sprintf("%s.%d", confpath, now.UnixNano()), []byte(conf), 0600); err != nil {
 		return err
 	}
-	if err := os.WriteFile(fmt.Sprintf("%s.%d", pempath, now.UnixNano()), []byte(certificate.Certificate), 0600); err != nil {
+	if err := os.WriteFile(fmt.Sprintf("%s.%d", pempath, now.UnixNano()), []byte(rdsmysql.Certificate), 0600); err != nil {
 		return err
 	}
 

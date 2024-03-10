@@ -20,8 +20,8 @@ func main() {
 	defer cancel()
 
 	err := downloadCertificate(ctx, &options{
-		file: "rds.go",
-		pkg:  "certificate",
+		file: "certificate_gen.go",
+		pkg:  "rdsmysql",
 		url:  "https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem",
 		name: "rdsCertificates",
 		comment: `// rdsCertificates is the intermediate and root [certificates] for [Amazon RDS MySQL] and [Amazon Aurora MySQL].
