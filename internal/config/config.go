@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
-	"github.com/shogo82148/rdsmysql/v2"
+	"github.com/shogo82148/rdsmysql"
 )
 
 // Generate generates the configuration file for mysql.
