@@ -21,7 +21,7 @@ func Apply(mysqlConfig *mysql.Config, awsConfig aws.Config) error {
 	// override configure for Amazon RDS
 	// see https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.Connecting.AWSCLI.html
 	mysqlConfig.AllowCleartextPasswords = true
-	mysqlConfig.TLS = TLSConfig
+	mysqlConfig.TLS = TLSConfig.Clone()
 
 	// refresh token
 	cred := awsConfig.Credentials
