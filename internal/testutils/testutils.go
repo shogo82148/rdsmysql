@@ -9,6 +9,8 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+const TestUser = "rdsmysql"
+
 func Setup(t *testing.T) {
 	t.Helper()
 
@@ -32,7 +34,25 @@ func Setup(t *testing.T) {
 	db := sql.OpenDB(conn)
 	defer db.Close()
 
-	if err := db.PingContext(context.Background()); err != nil {
+	if err := initializeUser(context.Background(), db); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func initializeUser(ctx context.Context, db *sql.DB) error {
+	var cnt int
+	row := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM `mysql`.`user` WHERE `user` = ?", TestUser)
+	if err := row.Scan(&cnt); err != nil {
+		return err
+	}
+	if cnt > 0 {
+		return nil // already initialized
+	}
+
+	_, err := db.ExecContext(ctx, "CREATE USER '"+TestUser+"' IDENTIFIED WITH AWSAuthenticationPlugin AS 'RDS'")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
