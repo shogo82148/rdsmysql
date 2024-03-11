@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/rds/auth"
@@ -29,8 +30,9 @@ func Apply(mysqlConfig *mysql.Config, awsConfig aws.Config) error {
 	if region == "" {
 		return errors.New("rdsmysql: region is missing")
 	}
+	addr := ensureHavePort(mysqlConfig.Addr)
 	beforeConnect := func(ctx context.Context, config *mysql.Config) error {
-		token, err := auth.BuildAuthToken(ctx, config.Addr, region, config.User, cred)
+		token, err := auth.BuildAuthToken(ctx, addr, region, config.User, cred)
 		if err != nil {
 			return fmt.Errorf("rdsmysql: fail to build auth token: %w", err)
 		}
@@ -42,4 +44,12 @@ func Apply(mysqlConfig *mysql.Config, awsConfig aws.Config) error {
 		return fmt.Errorf("rdsmysql: fail to apply beforeConnect: %w", err)
 	}
 	return nil
+}
+
+// ensureHavePort ensures that addr has a port.
+func ensureHavePort(addr string) string {
+	if _, _, err := net.SplitHostPort(addr); err != nil {
+		return net.JoinHostPort(addr, "3306")
+	}
+	return addr
 }
