@@ -13,6 +13,7 @@ func TestRun(t *testing.T) {
 	cfg := &config.Config{
 		User: testutils.User,
 		Host: testutils.Host,
+		Port: 3306,
 		Args: []string{"-e", "SELECT 1"},
 	}
 	if got := run(cfg); got != 0 {
