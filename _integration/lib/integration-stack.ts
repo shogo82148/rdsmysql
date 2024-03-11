@@ -27,12 +27,17 @@ export class IntegrationStack extends cdk.Stack {
     });
 
     // Relational Database Service
+    const rdsSG = new ec2.SecurityGroup(this, "RDSSG", {
+      vpc,
+    });
+    rdsSG.addIngressRule(bastionSG, ec2.Port.tcp(3306));
     const cluster = new rds.DatabaseCluster(this, "Database", {
       engine: rds.DatabaseClusterEngine.auroraMysql({
         version: rds.AuroraMysqlEngineVersion.VER_3_05_2,
       }),
       writer: rds.ClusterInstance.serverlessV2("writer"),
       vpc,
+      securityGroups: [rdsSG],
     });
   }
 }
