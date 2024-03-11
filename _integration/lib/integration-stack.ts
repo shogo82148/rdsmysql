@@ -10,7 +10,10 @@ export class IntegrationStack extends cdk.Stack {
     const vpc = new ec2.Vpc(this, "MyVpc", {});
 
     // Bastion EC2 Instance
-    const bastion = new ec2.Instance(this, "Bastion", {
+    const bastionSG = new ec2.SecurityGroup(this, "BastionSG", {
+      vpc,
+    });
+    const bastion = new ec2.BastionHostLinux(this, "Bastion", {
       vpc,
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.T4G,
@@ -19,6 +22,7 @@ export class IntegrationStack extends cdk.Stack {
       machineImage: new ec2.AmazonLinux2023ImageSsmParameter({
         cpuType: ec2.AmazonLinuxCpuType.ARM_64,
       }),
+      securityGroup: bastionSG,
     });
   }
 }
