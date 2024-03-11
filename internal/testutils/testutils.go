@@ -15,6 +15,18 @@ var User = "rdsmysql"
 // Host is the test host for the integrated test.
 var Host = os.Getenv("RDSMYSQL_HOST")
 
+var Region string
+
+func init() {
+	Region = os.Getenv("AWS_REGION")
+	if Region == "" {
+		Region = os.Getenv("AWS_DEFAULT_REGION")
+	}
+	if Region == "" {
+		Region = "us-east-1"
+	}
+}
+
 func Setup(t *testing.T) {
 	t.Helper()
 

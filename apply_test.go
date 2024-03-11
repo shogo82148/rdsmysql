@@ -3,7 +3,6 @@ package rdsmysql
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -15,12 +14,12 @@ import (
 func TestApply(t *testing.T) {
 	testutils.Setup(t)
 
-	awsConfig := aws.NewConfig()
+	awsConfig := aws.NewConfig().WithRegion(testutils.Region)
 	awsSession := session.Must(session.NewSession(awsConfig))
 
 	config := mysql.NewConfig()
 	config.User = testutils.User
-	config.Addr = fmt.Sprintf("%s:%d", testutils.Host, 3306)
+	config.Addr = testutils.Host
 	if err := Apply(config, awsSession); err != nil {
 		t.Fatal(err)
 	}
