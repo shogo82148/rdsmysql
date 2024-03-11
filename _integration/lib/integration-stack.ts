@@ -8,5 +8,17 @@ export class IntegrationStack extends cdk.Stack {
 
     // VPC
     const vpc = new ec2.Vpc(this, "MyVpc", {});
+
+    // Bastion EC2 Instance
+    const bastion = new ec2.Instance(this, "Bastion", {
+      vpc,
+      instanceType: ec2.InstanceType.of(
+        ec2.InstanceClass.T4G,
+        ec2.InstanceSize.MICRO
+      ),
+      machineImage: new ec2.AmazonLinux2023ImageSsmParameter({
+        cpuType: ec2.AmazonLinuxCpuType.ARM_64,
+      }),
+    });
   }
 }
