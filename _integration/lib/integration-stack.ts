@@ -39,5 +39,6 @@ export class IntegrationStack extends cdk.Stack {
       vpc,
       securityGroups: [rdsSG],
     });
+    cluster.secret?.grantRead(bastion);
   }
 }
