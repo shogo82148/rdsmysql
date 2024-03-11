@@ -7,7 +7,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/go-sql-driver/mysql"
-	"github.com/shogo82148/rdsmysql/internal/testutils"
+	"github.com/shogo82148/rdsmysql/v2/internal/testutils"
 )
 
 func TestApply(t *testing.T) {
