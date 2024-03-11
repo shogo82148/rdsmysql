@@ -9,7 +9,11 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-const TestUser = "rdsmysql"
+// User is the test user for the integrated test.
+var User = "rdsmysql"
+
+// Host is the test host for the integrated test.
+var Host = os.Getenv("RDSMYSQL_HOST")
 
 func Setup(t *testing.T) {
 	t.Helper()
@@ -41,7 +45,7 @@ func Setup(t *testing.T) {
 
 func initializeUser(ctx context.Context, db *sql.DB) error {
 	var cnt int
-	row := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM `mysql`.`user` WHERE `user` = ?", TestUser)
+	row := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM `mysql`.`user` WHERE `user` = ?", User)
 	if err := row.Scan(&cnt); err != nil {
 		return err
 	}
@@ -49,7 +53,7 @@ func initializeUser(ctx context.Context, db *sql.DB) error {
 		return nil // already initialized
 	}
 
-	_, err := db.ExecContext(ctx, "CREATE USER '"+TestUser+"' IDENTIFIED WITH AWSAuthenticationPlugin AS 'RDS'")
+	_, err := db.ExecContext(ctx, "CREATE USER '"+User+"' IDENTIFIED WITH AWSAuthenticationPlugin AS 'RDS'")
 	if err != nil {
 		return err
 	}
