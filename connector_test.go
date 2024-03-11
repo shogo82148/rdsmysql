@@ -11,7 +11,7 @@ import (
 	"github.com/shogo82148/rdsmysql/internal/testutils"
 )
 
-func TestApply(t *testing.T) {
+func TestConnector(t *testing.T) {
 	testutils.Setup(t)
 
 	awsConfig := aws.NewConfig().WithRegion(testutils.Region)
@@ -20,15 +20,13 @@ func TestApply(t *testing.T) {
 	config := mysql.NewConfig()
 	config.User = testutils.User
 	config.Addr = testutils.Host
-	if err := Apply(config, awsSession); err != nil {
-		t.Fatal(err)
+	connector := &Connector{
+		Session:           awsSession,
+		Config:            config,
+		MaxConnsPerSecond: 10,
 	}
 
-	conn, err := mysql.NewConnector(config)
-	if err != nil {
-		t.Fatal(err)
-	}
-	db := sql.OpenDB(conn)
+	db := sql.OpenDB(connector)
 	defer db.Close()
 
 	if err := db.PingContext(context.Background()); err != nil {
