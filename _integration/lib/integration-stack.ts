@@ -38,7 +38,9 @@ export class IntegrationStack extends cdk.Stack {
       writer: rds.ClusterInstance.serverlessV2("writer"),
       vpc,
       securityGroups: [rdsSG],
+      iamAuthentication: true,
     });
     cluster.secret?.grantRead(bastion);
+    cluster.grantConnect(bastion, "rdsmysql");
   }
 }
