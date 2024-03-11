@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as rds from "aws-cdk-lib/aws-rds";
 
 export class IntegrationStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -23,6 +24,15 @@ export class IntegrationStack extends cdk.Stack {
         cpuType: ec2.AmazonLinuxCpuType.ARM_64,
       }),
       securityGroup: bastionSG,
+    });
+
+    // Relational Database Service
+    const cluster = new rds.DatabaseCluster(this, "Database", {
+      engine: rds.DatabaseClusterEngine.auroraMysql({
+        version: rds.AuroraMysqlEngineVersion.VER_3_05_2,
+      }),
+      writer: rds.ClusterInstance.serverlessV2("writer"),
+      vpc,
     });
   }
 }
