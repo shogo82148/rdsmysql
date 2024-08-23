@@ -32,9 +32,9 @@ jobs:
           role-session-tagging: true
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         with:
-          version: latest
+          version: "~> v2"
           args: release --clean
           workdir: .
         env:
