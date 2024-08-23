@@ -39,7 +39,7 @@ jobs:
         run: make test
         working-directory: v2
 
-  goreleaser-check:
+  goreleaser-check-v1:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -50,9 +50,26 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Check GoReleaser configure v1
+      - name: Check GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
-          version: latest
+          version: "~> v2"
+          args: check
+
+  goreleaser-check-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Check GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: "~> v2"
           args: check
           workdir: v2
