@@ -132,40 +132,40 @@ blobs:
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-amd64]
-    folder: amazonlinux/2/x86_64/rdsmysql
+    directory: amazonlinux/2/x86_64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-arm64]
-    folder: amazonlinux/2/aarch64/rdsmysql
+    directory: amazonlinux/2/aarch64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-amd64]
-    folder: amazonlinux/2023/x86_64/rdsmysql
+    directory: amazonlinux/2023/x86_64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-arm64]
-    folder: amazonlinux/2023/aarch64/rdsmysql
+    directory: amazonlinux/2023/aarch64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-amd64]
-    folder: centos/7/x86_64/rdsmysql
+    directory: centos/7/x86_64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-arm64]
-    folder: centos/7/aarch64/rdsmysql
+    directory: centos/7/aarch64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-amd64]
-    folder: almalinux/8/x86_64/rdsmysql
+    directory: almalinux/8/x86_64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-arm64]
-    folder: almalinux/8/aarch64/rdsmysql
+    directory: almalinux/8/aarch64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-amd64]
-    folder: rockylinux/8/x86_64/rdsmysql
+    directory: rockylinux/8/x86_64/rdsmysql
   - provider: s3
     bucket: shogo82148-rpm-temporary
     ids: [package-arm64]
-    folder: rockylinux/8/aarch64/rdsmysql
+    directory: rockylinux/8/aarch64/rdsmysql
