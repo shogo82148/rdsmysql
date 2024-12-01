@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.28.3
 	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.4.23
 	github.com/go-sql-driver/mysql v1.8.1
-	golang.org/x/time v0.7.0
+	golang.org/x/time v0.8.0
 )
 
 require (
