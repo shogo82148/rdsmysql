@@ -6,5 +6,5 @@ require (
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.8.1
-	golang.org/x/time v0.8.0
+	golang.org/x/time v0.9.0
 )
