@@ -7,11 +7,6 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-
-  - package-ecosystem: "gomod"
-    directory: "/v2/"
-    schedule:
-      interval: "monthly"
     groups:
       # grouping updates of AWS SDK for Go v2
       aws-sdk:
