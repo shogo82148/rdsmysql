@@ -80,7 +80,7 @@ builds:
       - -w
       - -X main.version={{.Version}}
 archives:
-  - format: tar.gz
+  - formats: [tar.gz]
     # use zip for windows archives
     format_overrides:
       - goos: windows
