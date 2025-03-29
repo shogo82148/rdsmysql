@@ -3,8 +3,8 @@ package main
 import (
 	"testing"
 
-	"github.com/shogo82148/rdsmysql/internal/config"
-	"github.com/shogo82148/rdsmysql/internal/testutils"
+	"github.com/shogo82148/rdsmysql/v2/internal/config"
+	"github.com/shogo82148/rdsmysql/v2/internal/testutils"
 )
 
 func TestRun(t *testing.T) {

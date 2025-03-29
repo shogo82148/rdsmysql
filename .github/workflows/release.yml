@@ -1,9 +1,9 @@
-name: goreleaser v1
+name: goreleaser
 
 on:
   push:
     tags:
-      - "v1.*"
+      - "v*"
 
 jobs:
   goreleaser:
@@ -36,6 +36,5 @@ jobs:
         with:
           version: "~> v2"
           args: release --clean
-          workdir: .
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
