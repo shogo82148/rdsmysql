@@ -84,7 +84,7 @@ archives:
     # use zip for windows archives
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     builds:
       - rdsmysql-amd64
       - rdsmysql-arm64
