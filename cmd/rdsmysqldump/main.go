@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -11,9 +12,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/shogo82148/rdsmysql/internal/config"
+	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/shogo82148/rdsmysql/v2/internal/config"
 )
 
 func main() {
@@ -30,19 +30,21 @@ func run(c *config.Config) int {
 		return 0
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	dir, err := os.MkdirTemp("", "rdsmysql-")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer os.RemoveAll(dir)
 
-	conf := aws.NewConfig()
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		Config:            *conf,
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	cfg, err := awsConfig.LoadDefaultConfig(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	err = config.Generate(sess, dir, c)
+	err = config.Generate(ctx, cfg, dir, c)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -89,7 +91,7 @@ func run(c *config.Config) int {
 		for {
 			select {
 			case <-ticker.C:
-				config.Generate(sess, dir, c)
+				config.Generate(ctx, cfg, dir, c)
 			case <-done:
 				return
 			}

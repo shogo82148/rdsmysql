@@ -5,22 +5,26 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/go-sql-driver/mysql"
-	"github.com/shogo82148/rdsmysql/internal/testutils"
+	"github.com/shogo82148/rdsmysql/v2/internal/testutils"
 )
 
 func TestApply(t *testing.T) {
 	testutils.Setup(t)
 
-	awsConfig := aws.NewConfig().WithRegion(testutils.Region)
-	awsSession := session.Must(session.NewSession(awsConfig))
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	awsConfig, err := config.LoadDefaultConfig(ctx, config.WithRegion(testutils.Region))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	config := mysql.NewConfig()
 	config.User = testutils.User
 	config.Addr = testutils.Host
-	if err := Apply(config, awsSession); err != nil {
+	if err := Apply(config, awsConfig); err != nil {
 		t.Fatal(err)
 	}
 
@@ -31,7 +35,7 @@ func TestApply(t *testing.T) {
 	db := sql.OpenDB(conn)
 	defer db.Close()
 
-	if err := db.PingContext(context.Background()); err != nil {
+	if err := db.PingContext(ctx); err != nil {
 		t.Error(err)
 	}
 }

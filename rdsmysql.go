@@ -13,14 +13,14 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/go-sql-driver/mysql"
 )
 
 // Driver is a MySQL driver using IAM DB Auth.
 type Driver struct {
-	// Session is an AWS session
-	Session *session.Session
+	// AWSConfig is AWS Config.
+	AWSConfig aws.Config
 }
 
 var _ driver.Driver = (*Driver)(nil)
@@ -37,7 +37,7 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 
 // OpenConnector opens a new connector.
 func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
-	if d.Session.Config.Region == nil {
+	if d.AWSConfig.Region == "" {
 		return nil, errors.New("rdsmysql: region is missing")
 	}
 
@@ -47,7 +47,7 @@ func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
 	}
 
 	return &Connector{
-		Session: d.Session,
-		Config:  config,
+		AWSConfig:   d.AWSConfig,
+		MySQLConfig: config,
 	}, nil
 }

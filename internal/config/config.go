@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -8,21 +9,19 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/rds/rdsutils"
-	"github.com/shogo82148/rdsmysql"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/rds/auth"
+	"github.com/shogo82148/rdsmysql/v2"
 )
 
 // Generate generates the configuration file for mysql.
-func Generate(session *session.Session, dir string, config *Config) error {
-	credentials := session.Config.Credentials
-	token, err := rdsutils.BuildAuthToken(
-		fmt.Sprintf("%s:%d", config.Host, config.Port),
-		aws.StringValue(session.Config.Region),
-		config.User,
-		credentials,
-	)
+func Generate(ctx context.Context, awsConfig aws.Config, dir string, config *Config) error {
+	cred := awsConfig.Credentials
+	region := awsConfig.Region
+	if region == "" {
+		return errors.New("region is not specified")
+	}
+	token, err := auth.BuildAuthToken(ctx, config.Host, region, config.User, cred)
 	if err != nil {
 		return fmt.Errorf("fail to build auth token: %w", err)
 	}

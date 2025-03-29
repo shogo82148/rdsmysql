@@ -1,27 +1,29 @@
 package rdsmysql_test
 
 import (
+	"context"
 	"database/sql"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/go-sql-driver/mysql"
-	"github.com/shogo82148/rdsmysql"
+	"github.com/shogo82148/rdsmysql/v2"
 )
 
 func ExampleConnector() {
-	// configure AWS session
-	awsConfig := aws.NewConfig().WithRegion("ap-northeast-1")
-	awsSession := session.Must(session.NewSession(awsConfig))
+	// configure AWS SDK
+	awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("ap-northeast-1"))
+	if err != nil {
+		panic(err)
+	}
 
 	// configure the connector
-	cfg, err := mysql.ParseDSN("user:@tcp(db-foobar.ap-northeast-1.rds.amazonaws.com:3306)/")
+	mysqlConfig, err := mysql.ParseDSN("user:@tcp(db-foobar.ap-northeast-1.rds.amazonaws.com:3306)/")
 	if err != nil {
 		panic(err)
 	}
 	connector := &rdsmysql.Connector{
-		Session: awsSession,
-		Config:  cfg,
+		AWSConfig:   awsConfig,
+		MySQLConfig: mysqlConfig,
 	}
 
 	// open the database
@@ -32,11 +34,14 @@ func ExampleConnector() {
 }
 
 func ExampleDriver() {
-	// register authentication information
-	awsConfig := aws.NewConfig().WithRegion("ap-northeast-1")
-	awsSession := session.Must(session.NewSession(awsConfig))
+	// configure AWS SDK
+	awsConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("ap-northeast-1"))
+	if err != nil {
+		panic(err)
+	}
+
 	driver := &rdsmysql.Driver{
-		Session: awsSession,
+		AWSConfig: awsConfig,
 	}
 	sql.Register("rdsmysql", driver)
 

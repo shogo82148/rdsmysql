@@ -5,7 +5,7 @@ import (
 	"database/sql/driver"
 	"sync"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/go-sql-driver/mysql"
 	"golang.org/x/time/rate"
 )
@@ -16,11 +16,11 @@ var _ driver.Connector = (*Connector)(nil)
 // Connector is a MySQL connector using IAM DB Auth.
 // It implements [database/sql/driver.Connector].
 type Connector struct {
-	// Session is AWS Session.
-	Session *session.Session
+	// AWSConfig is AWS Config.
+	AWSConfig aws.Config
 
-	// Config is a configure for connecting to MySQL servers.
-	Config *mysql.Config
+	// MySQLConfig is a configure for connecting to MySQL servers.
+	MySQLConfig *mysql.Config
 
 	// MaxConnsPerSecond is a limit for creating new connections.
 	// Zero means no limit.
@@ -41,10 +41,10 @@ type Connector struct {
 func (c *Connector) init() {
 	// shallow copy, but ok. we rewrite only shallow fields.
 	config := new(mysql.Config)
-	*config = *c.Config
+	*config = *c.MySQLConfig
 
 	// override configure for Amazon RDS
-	if err := Apply(config, c.Session); err != nil {
+	if err := Apply(config, c.AWSConfig); err != nil {
 		c.err = err
 		return
 	}
@@ -81,7 +81,5 @@ func (c *Connector) Connect(ctx context.Context) (driver.Conn, error) {
 
 // Driver returns the underlying [database/sql/driver.Driver] of the [Connector].
 func (c *Connector) Driver() driver.Driver {
-	return &Driver{
-		Session: c.Session,
-	}
+	return &Driver{}
 }
