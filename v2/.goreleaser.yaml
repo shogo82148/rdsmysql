@@ -80,12 +80,12 @@ builds:
       - -w
       - -X main.version={{.Version}}
 archives:
-  - format: tar.gz
+  - formats: [tar.gz]
     # use zip for windows archives
     format_overrides:
       - goos: windows
-        format: zip
-    builds:
+        formats: [zip]
+    ids:
       - rdsmysql-amd64
       - rdsmysql-arm64
       - rdsmysqldump-amd64
@@ -98,7 +98,7 @@ changelog:
 nfpms:
   # amd64 package
   - id: package-amd64
-    builds:
+    ids:
       - rdsmysql-amd64
       - rdsmysqldump-amd64
     homepage: https://github.com/shogo82148/rdsmysql
@@ -115,7 +115,7 @@ nfpms:
 
   # arm64 package
   - id: package-arm64
-    builds:
+    ids:
       - rdsmysql-arm64
       - rdsmysqldump-arm64
     homepage: https://github.com/shogo82148/rdsmysql
