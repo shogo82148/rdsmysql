@@ -85,7 +85,7 @@ archives:
     format_overrides:
       - goos: windows
         formats: [zip]
-    builds:
+    ids:
       - rdsmysql-amd64
       - rdsmysql-arm64
       - rdsmysqldump-amd64
