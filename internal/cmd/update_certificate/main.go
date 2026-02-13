@@ -31,23 +31,13 @@ func main() {
 `,
 		},
 		{
-			url:  "https://truststore.pki.us-gov-west-1.rds.amazonaws.com/us-gov-east-1/us-gov-east-1-bundle.pem",
-			name: "rdsGovCloudUSEast1Certificates",
-			comment: `// rdsGovCloudUSEast1Certificates is the intermediate and root [certificates] for [Amazon RDS MySQL] and [Amazon Aurora MySQL] in the AWS GovCloud (US-East) region.
+			url:  "https://truststore.pki.us-gov-west-1.rds.amazonaws.com/global/global-bundle.pem",
+			name: "rdsGovCloudCertificates",
+			comment: `// rdsGovCloudCertificates is the intermediate and root [certificates] for [Amazon RDS MySQL] and [Amazon Aurora MySQL] in the AWS GovCloud regions.
 //
 // [Amazon RDS MySQL]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html#UsingWithRDS.SSL.CertificatesAllRegions
 // [Amazon Aurora MySQL]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.SSL.html#UsingWithRDS.SSL.CertificatesAllRegions
-// [certificates]: https://truststore.pki.us-gov-west-1.rds.amazonaws.com/us-gov-east-1/us-gov-east-1-bundle.pem
-`,
-		},
-		{
-			url:  "https://truststore.pki.us-gov-west-1.rds.amazonaws.com/us-gov-west-1/us-gov-west-1-bundle.pem",
-			name: "rdsGovCloudUSWest1Certificates",
-			comment: `// rdsGovCloudUSWest1Certificates is the intermediate and root [certificates] for [Amazon RDS MySQL] and [Amazon Aurora MySQL] in the AWS GovCloud (US-West) region.
-//
-// [Amazon RDS MySQL]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html#UsingWithRDS.SSL.CertificatesAllRegions
-// [Amazon Aurora MySQL]: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.SSL.html#UsingWithRDS.SSL.CertificatesAllRegions
-// [certificates]: https://truststore.pki.us-gov-west-1.rds.amazonaws.com/us-gov-west-1/us-gov-west-1-bundle.pem
+// [certificates]: https://truststore.pki.us-gov-west-1.rds.amazonaws.com/global/global-bundle.pem
 `,
 		},
 	}
