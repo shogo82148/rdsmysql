@@ -15,7 +15,7 @@ import (
 //
 // [Amazon RDS MySQL]: https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/UsingWithRDS.SSL.html
 // [Amazon Aurora MySQL]: https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.SSL.html
-const Certificates = rdsCertificates
+const Certificates = rdsCertificates + rdsGovCloudCertificates
 
 // TLSConfig is the tls.TLSConfig for connecting RDS MySQL with SSL/TLS.
 var TLSConfig *tls.Config
