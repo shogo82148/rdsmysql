@@ -1,13 +1,13 @@
 module github.com/shogo82148/rdsmysql/v2
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.41.5
 	github.com/aws/aws-sdk-go-v2/config v1.32.13
 	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.6.21
 	github.com/go-sql-driver/mysql v1.9.3
-	golang.org/x/time v0.14.0
+	golang.org/x/time v0.15.0
 )
 
 require (
