@@ -25,9 +25,33 @@ func Generate(ctx context.Context, awsConfig aws.Config, dir string, config *Con
 	if err != nil {
 		return fmt.Errorf("fail to build auth token: %w", err)
 	}
-	pempath := filepath.Join(dir, "rds-combined-ca-bundle.pem")
 	confpath := filepath.Join(dir, "my.conf")
-	conf := fmt.Sprintf(`[client]
+	now := time.Now()
+
+	var conf string
+	if config.UseSystemCertPool {
+		// Trust the system's CA certificates instead of the bundled Amazon RDS root
+		// certificates. Enable this when connecting through Amazon RDS Proxy, which presents
+		// certificates issued by AWS Certificate Manager (ACM) rather than the Amazon RDS
+		// root CA. ssl-mode is set explicitly because without ssl-ca, mysql otherwise
+		// defaults to ssl-mode=PREFERRED, which doesn't verify the server certificate at all.
+		conf = fmt.Sprintf(`[client]
+host = %s
+user = %s
+port = %d
+password = %s
+ssl-mode = VERIFY_IDENTITY
+enable-cleartext-plugin
+`, config.Host, config.User, config.Port, token)
+	} else {
+		pempath := filepath.Join(dir, "rds-combined-ca-bundle.pem")
+		if err := os.WriteFile(fmt.Sprintf("%s.%d", pempath, now.UnixNano()), []byte(rdsmysql.Certificates), 0600); err != nil {
+			return err
+		}
+		if err := os.Rename(fmt.Sprintf("%s.%d", pempath, now.UnixNano()), pempath); err != nil {
+			return err
+		}
+		conf = fmt.Sprintf(`[client]
 host = %s
 user = %s
 port = %d
@@ -35,19 +59,12 @@ password = %s
 ssl-ca = %s
 enable-cleartext-plugin
 `, config.Host, config.User, config.Port, token, pempath)
+	}
 
-	now := time.Now()
 	if err := os.WriteFile(fmt.Sprintf("%s.%d", confpath, now.UnixNano()), []byte(conf), 0600); err != nil {
 		return err
 	}
-	if err := os.WriteFile(fmt.Sprintf("%s.%d", pempath, now.UnixNano()), []byte(rdsmysql.Certificates), 0600); err != nil {
-		return err
-	}
-
 	if err := os.Rename(fmt.Sprintf("%s.%d", confpath, now.UnixNano()), confpath); err != nil {
-		return err
-	}
-	if err := os.Rename(fmt.Sprintf("%s.%d", pempath, now.UnixNano()), pempath); err != nil {
 		return err
 	}
 
@@ -60,7 +77,14 @@ type Config struct {
 	Host    string
 	Port    int
 	Version bool
-	Args    []string
+
+	// UseSystemCertPool makes the connection trust the system's CA certificate pool
+	// instead of the Amazon RDS root certificates. Enable this when connecting through
+	// Amazon RDS Proxy, which presents certificates issued by AWS Certificate Manager (ACM)
+	// rather than the Amazon RDS root CA.
+	UseSystemCertPool bool
+
+	Args []string
 }
 
 // Parse parses the args of mysql command.
@@ -94,6 +118,8 @@ func Parse(args []string) (*Config, error) {
 			conf.Port = port
 		case "-V", "--version":
 			conf.Version = true
+		case "--use-system-cert-pool":
+			conf.UseSystemCertPool = true
 		default:
 			conf.Args = append(conf.Args, args[i])
 		}
