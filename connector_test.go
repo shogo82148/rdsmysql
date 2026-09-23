@@ -29,7 +29,9 @@ func TestConnector(t *testing.T) {
 	}
 
 	db := sql.OpenDB(connector)
-	defer db.Close()
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
 
 	if err := db.PingContext(ctx); err != nil {
 		t.Error(err)

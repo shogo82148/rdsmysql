@@ -31,7 +31,9 @@ func TestApply(t *testing.T) {
 		t.Fatal(err)
 	}
 	db := sql.OpenDB(conn)
-	defer db.Close()
+	t.Cleanup(func() {
+		_ = db.Close()
+	})
 
 	if err := db.PingContext(ctx); err != nil {
 		t.Error(err)

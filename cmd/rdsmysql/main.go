@@ -37,7 +37,7 @@ func run(c *config.Config) int {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer os.RemoveAll(dir)
+	defer os.RemoveAll(dir) //nolint:errcheck // clean up
 
 	cfg, err := awsConfig.LoadDefaultConfig(ctx)
 	if err != nil {
@@ -73,7 +73,7 @@ func run(c *config.Config) int {
 		for {
 			select {
 			case s := <-sig:
-				cmd.Process.Signal(s)
+				_ = cmd.Process.Signal(s)
 			case <-done:
 				return
 			}
@@ -82,12 +82,14 @@ func run(c *config.Config) int {
 
 	// password rotation
 	wg.Go(func() {
-		ticker := time.NewTicker(5 * time.Minute)
+		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 		for {
 			select {
 			case <-ticker.C:
-				config.Generate(ctx, cfg, dir, c)
+				if err := config.Generate(ctx, cfg, dir, c); err != nil {
+					log.Printf("failed to re-generate auth token: %v", err)
+				}
 			case <-done:
 				return
 			}
