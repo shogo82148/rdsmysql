@@ -87,11 +87,15 @@ func appendCertificateConst(ctx context.Context, buf *bytes.Buffer, opts *option
 	}
 
 	buf.WriteString(opts.comment)
-	buf.WriteString("const " + opts.name + " = `")
+	buf.WriteString("const ")
+	buf.WriteString(opts.name)
+	buf.WriteString(" = `")
 	buf.Write(pemCerts)
 	buf.WriteString("`\n\n")
 
-	buf.WriteString("// " + opts.name + " contains:\n")
+	buf.WriteString("// ")
+	buf.WriteString(opts.name)
+	buf.WriteString(" contains:\n")
 	buf.WriteString("//\n")
 	for _, cert := range certs {
 		nbf := cert.NotBefore.Format(time.RFC3339)
