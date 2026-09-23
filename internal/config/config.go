@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -21,7 +22,8 @@ func Generate(ctx context.Context, awsConfig aws.Config, dir string, config *Con
 	if region == "" {
 		return errors.New("region is not specified")
 	}
-	token, err := auth.BuildAuthToken(ctx, config.Host, region, config.User, cred)
+	endpoint := net.JoinHostPort(config.Host, strconv.Itoa(config.Port))
+	token, err := auth.BuildAuthToken(ctx, endpoint, region, config.User, cred)
 	if err != nil {
 		return fmt.Errorf("fail to build auth token: %w", err)
 	}
