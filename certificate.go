@@ -7,6 +7,8 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 // Certificates is the certificates for connecting RDS MySQL with SSL/TLS.
@@ -32,6 +34,9 @@ func init() {
 		panic(err)
 	}
 	TLSConfig = tlsConfig
+	if err := mysql.RegisterTLSConfig("rdsmysql", TLSConfig); err != nil {
+		panic(err)
+	}
 }
 
 // NewTLSConfig returns a new [tls.Config] for connecting to Amazon RDS MySQL.
