@@ -28,7 +28,7 @@ func ExampleConnector() {
 
 	// open the database
 	db := sql.OpenDB(connector)
-	defer db.Close()
+	defer db.Close() //nolint:errcheck
 
 	// ... do something using db ...
 }
@@ -49,7 +49,7 @@ func ExampleDriver() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	defer db.Close() //nolint:errcheck
 
 	// ... do something using db ...
 }

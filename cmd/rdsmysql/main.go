@@ -37,7 +37,7 @@ func run(c *config.Config) int {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer os.RemoveAll(dir)
+	defer os.RemoveAll(dir) //nolint:errcheck // clean up
 
 	cfg, err := awsConfig.LoadDefaultConfig(ctx)
 	if err != nil {
@@ -67,36 +67,34 @@ func run(c *config.Config) int {
 	done := make(chan struct{})
 
 	// transfer signals.
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		sig := make(chan os.Signal, 1)
 		signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 		for {
 			select {
 			case s := <-sig:
-				cmd.Process.Signal(s)
+				_ = cmd.Process.Signal(s)
 			case <-done:
 				return
 			}
 		}
-	}()
+	})
 
 	// password rotation
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		ticker := time.NewTicker(5 * time.Minute)
+	wg.Go(func() {
+		ticker := time.NewTicker(10 * time.Minute)
 		defer ticker.Stop()
 		for {
 			select {
 			case <-ticker.C:
-				config.Generate(ctx, cfg, dir, c)
+				if err := config.Generate(ctx, cfg, dir, c); err != nil {
+					log.Printf("failed to re-generate auth token: %v", err)
+				}
 			case <-done:
 				return
 			}
 		}
-	}()
+	})
 
 	_ = cmd.Wait()
 	close(done)

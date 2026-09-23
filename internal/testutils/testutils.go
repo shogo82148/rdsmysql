@@ -48,9 +48,10 @@ func Setup(t *testing.T) {
 		t.Fatal(err)
 	}
 	db := sql.OpenDB(conn)
-	defer db.Close()
+	defer db.Close() //nolint:errcheck // clean up
 
-	if err := initializeUser(context.Background(), db); err != nil {
+	ctx := t.Context()
+	if err := initializeUser(ctx, db); err != nil {
 		t.Fatal(err)
 	}
 }
