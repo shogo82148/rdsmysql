@@ -49,6 +49,24 @@ func main() {
 
 If you use [AWS SDK for Go v1](https://github.com/aws/aws-sdk-go), use [rdsmysql v1](https://pkg.go.dev/github.com/shogo82148/rdsmysql).
 
+### Connecting through Amazon RDS Proxy
+
+By default, rdsmysql only trusts the Amazon RDS root certificates. [Amazon RDS Proxy](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.html)
+presents certificates issued by AWS Certificate Manager (ACM) instead, so connecting through a
+proxy fails TLS verification unless you opt in to trusting the system's CA certificate pool
+instead of the Amazon RDS root certificates:
+
+```go
+connector := &rdsmysql.Connector{
+	AWSConfig:         awsConfig,
+	MySQLConfig:       mysqlConfig,
+	UseSystemCertPool: true,
+}
+```
+
+The same option is available as `rdsmysql.Driver{UseSystemCertPool: true}` and as
+`rdsmysql.WithSystemCertPool()` when calling `rdsmysql.Apply` directly.
+
 ## Related Posts
 
 - [How do I connect to my Amazon RDS MySQL DB instance or Aurora MySQL DB cluster using Amazon RDS Proxy?](https://aws.amazon.com/premiumsupport/knowledge-center/rds-aurora-mysql-connect-proxy/)

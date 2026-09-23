@@ -21,6 +21,14 @@ import (
 type Driver struct {
 	// AWSConfig is AWS Config.
 	AWSConfig aws.Config
+
+	// UseSystemCertPool makes connections trust the system's CA certificate pool instead of
+	// the Amazon RDS root certificates. Enable this when connecting through [Amazon RDS
+	// Proxy], which presents certificates issued by AWS Certificate Manager (ACM) rather than
+	// the Amazon RDS root CA.
+	//
+	// [Amazon RDS Proxy]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.html
+	UseSystemCertPool bool
 }
 
 var _ driver.Driver = (*Driver)(nil)
@@ -47,7 +55,8 @@ func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
 	}
 
 	return &Connector{
-		AWSConfig:   d.AWSConfig,
-		MySQLConfig: config,
+		AWSConfig:         d.AWSConfig,
+		MySQLConfig:       config,
+		UseSystemCertPool: d.UseSystemCertPool,
 	}, nil
 }

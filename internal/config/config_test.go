@@ -7,11 +7,12 @@ import (
 
 func TestParse(t *testing.T) {
 	cases := []struct {
-		in   []string
-		user string
-		host string
-		port int
-		out  []string
+		in                []string
+		user              string
+		host              string
+		port              int
+		useSystemCertPool bool
+		out               []string
 	}{
 		{
 			in:   []string{},
@@ -46,6 +47,15 @@ func TestParse(t *testing.T) {
 			port: 3306,
 			out:  []string{"-abc", "--foobar", "foobar"},
 		},
+
+		{
+			in:                []string{"-u", "username", "--use-system-cert-pool"},
+			user:              "username",
+			host:              "",
+			port:              3306,
+			useSystemCertPool: true,
+			out:               []string{},
+		},
 	}
 
 	for i, tc := range cases {
@@ -62,6 +72,9 @@ func TestParse(t *testing.T) {
 		}
 		if conf.Port != tc.port {
 			t.Errorf("%d: want %d, got %d", i, tc.port, conf.Port)
+		}
+		if conf.UseSystemCertPool != tc.useSystemCertPool {
+			t.Errorf("%d: want %v, got %v", i, tc.useSystemCertPool, conf.UseSystemCertPool)
 		}
 		if !reflect.DeepEqual(conf.Args, tc.out) {
 			t.Errorf("%d: want %#v, got %#v", i, tc.out, conf.Args)
