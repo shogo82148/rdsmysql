@@ -67,9 +67,7 @@ func run(c *config.Config) int {
 	done := make(chan struct{})
 
 	// transfer signals.
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		sig := make(chan os.Signal, 1)
 		signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 		for {
@@ -80,12 +78,10 @@ func run(c *config.Config) int {
 				return
 			}
 		}
-	}()
+	})
 
 	// password rotation
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Go(func() {
 		ticker := time.NewTicker(5 * time.Minute)
 		defer ticker.Stop()
 		for {
@@ -96,7 +92,7 @@ func run(c *config.Config) int {
 				return
 			}
 		}
-	}()
+	})
 
 	_ = cmd.Wait()
 	close(done)

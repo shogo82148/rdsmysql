@@ -1,7 +1,6 @@
 package rdsmysql
 
 import (
-	"context"
 	"database/sql"
 	"testing"
 
@@ -13,8 +12,7 @@ import (
 func TestApply(t *testing.T) {
 	testutils.Setup(t)
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	awsConfig, err := config.LoadDefaultConfig(ctx, config.WithRegion(testutils.Region))
 	if err != nil {
