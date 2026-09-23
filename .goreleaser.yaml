@@ -139,16 +139,6 @@ blobs:
     ids: [package-arm64]
     directory: amazonlinux/2023/aarch64/rdsmysql
 
-  # CentOS 7 RPMs
-  - provider: s3
-    bucket: shogo82148-rpm-temporary
-    ids: [package-amd64]
-    directory: centos/7/x86_64/rdsmysql
-  - provider: s3
-    bucket: shogo82148-rpm-temporary
-    ids: [package-arm64]
-    directory: centos/7/aarch64/rdsmysql
-
   # AlmaLinux 8 RPMs
   - provider: s3
     bucket: shogo82148-rpm-temporary
