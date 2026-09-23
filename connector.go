@@ -26,6 +26,14 @@ type Connector struct {
 	// Zero means no limit.
 	MaxConnsPerSecond int
 
+	// UseSystemCertPool makes the connector trust the system's CA certificate pool instead
+	// of the Amazon RDS root certificates. Enable this when connecting through [Amazon RDS
+	// Proxy], which presents certificates issued by AWS Certificate Manager (ACM) rather than
+	// the Amazon RDS root CA.
+	//
+	// [Amazon RDS Proxy]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-proxy.html
+	UseSystemCertPool bool
+
 	// once guards config and limiter
 	once sync.Once
 
@@ -44,7 +52,11 @@ func (c *Connector) init() {
 	*config = *c.MySQLConfig
 
 	// override configure for Amazon RDS
-	if err := Apply(config, c.AWSConfig); err != nil {
+	var opts []ApplyOption
+	if c.UseSystemCertPool {
+		opts = append(opts, WithSystemCertPool())
+	}
+	if err := Apply(config, c.AWSConfig, opts...); err != nil {
 		c.err = err
 		return
 	}

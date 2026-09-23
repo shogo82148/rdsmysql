@@ -26,3 +26,31 @@ func TestCertificate(t *testing.T) {
 		}
 	}
 }
+
+func TestNewTLSConfig(t *testing.T) {
+	t.Parallel()
+
+	t.Run("without system cert pool", func(t *testing.T) {
+		t.Parallel()
+
+		config, err := NewTLSConfig(false)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if config.RootCAs == nil {
+			t.Fatal("RootCAs is nil")
+		}
+	})
+
+	t.Run("with system cert pool", func(t *testing.T) {
+		t.Parallel()
+
+		config, err := NewTLSConfig(true)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if config.RootCAs == nil {
+			t.Fatal("RootCAs is nil")
+		}
+	})
+}
